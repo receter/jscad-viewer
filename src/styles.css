@@ -1,0 +1,135 @@
+/*
+ * Every colour and radius is a custom property, so a host page can match the viewer
+ * to its own design system without reaching into the shadow root. The defaults are a
+ * neutral light palette, swapped for a dark one by the `theme` attribute or, when that
+ * is absent, by the reader's colour-scheme preference.
+ */
+:host {
+  --_border: var(--jscad-viewer-border, #d0d4da);
+  --_radius: var(--jscad-viewer-radius, 0.4rem);
+  --_surface: var(--jscad-viewer-surface, #f9f9fb);
+  --_background: var(--jscad-viewer-background, #ffffff);
+  --_muted: var(--jscad-viewer-muted, #606770);
+  --_danger: var(--jscad-viewer-danger, #b3261e);
+  --_code-background: var(--jscad-viewer-code-background, #f0f1f3);
+  --_text: var(--jscad-viewer-text, #1c1e21);
+
+  display: block;
+  position: relative;
+  height: 320px;
+}
+
+:host([theme='dark']) {
+  --_border: var(--jscad-viewer-border, #444950);
+  --_surface: var(--jscad-viewer-surface, #1c1f24);
+  --_background: var(--jscad-viewer-background, #18191a);
+  --_muted: var(--jscad-viewer-muted, #a0a6ae);
+  --_danger: var(--jscad-viewer-danger, #ff8a80);
+  --_code-background: var(--jscad-viewer-code-background, #2a2d33);
+  --_text: var(--jscad-viewer-text, #e3e3e3);
+}
+
+@media (prefers-color-scheme: dark) {
+  :host(:not([theme])) {
+    --_border: var(--jscad-viewer-border, #444950);
+    --_surface: var(--jscad-viewer-surface, #1c1f24);
+    --_background: var(--jscad-viewer-background, #18191a);
+    --_muted: var(--jscad-viewer-muted, #a0a6ae);
+    --_danger: var(--jscad-viewer-danger, #ff8a80);
+    --_code-background: var(--jscad-viewer-code-background, #2a2d33);
+    --_text: var(--jscad-viewer-text, #e3e3e3);
+  }
+}
+
+:host([hidden]) {
+  display: none;
+}
+
+.viewport {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  border: 1px solid var(--_border);
+  border-radius: var(--_radius);
+  background: var(--_surface);
+  /* Drags are read here rather than on the canvas, which the viewer owns and replaces. */
+  cursor: grab;
+  touch-action: pan-y;
+}
+
+.viewport:active {
+  cursor: grabbing;
+}
+
+/* Filled by the viewer with a canvas of its own making. */
+.canvas-host {
+  position: absolute;
+  inset: 0;
+}
+
+.canvas-host canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.hint,
+.reset {
+  position: absolute;
+  bottom: 0.5rem;
+  margin: 0;
+  font: inherit;
+  font-size: 0.75rem;
+  line-height: 1.4;
+  color: var(--_muted);
+  pointer-events: none;
+  user-select: none;
+}
+
+.hint {
+  left: 0.75rem;
+}
+
+.reset {
+  right: 0.5rem;
+  padding: 0.15rem 0.6rem;
+  border: 1px solid var(--_border);
+  border-radius: var(--_radius);
+  background: var(--_background);
+  cursor: pointer;
+  pointer-events: auto;
+  opacity: 0;
+  transition: opacity 150ms ease;
+}
+
+.viewport:hover .reset,
+.reset:focus-visible {
+  opacity: 1;
+}
+
+.error {
+  position: absolute;
+  inset: 0;
+  /* Covers the viewport, so it must not keep offering the grab cursor. */
+  cursor: default;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 1rem 1.25rem;
+  background: var(--_surface);
+  color: var(--_danger);
+}
+
+.error pre {
+  margin: 0;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.8rem;
+  white-space: pre-wrap;
+  background: var(--_code-background);
+  color: var(--_text);
+}
+
+[hidden] {
+  display: none !important;
+}

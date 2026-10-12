@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>jscad-viewer demo</title>
+    <style>
+      :root {
+        color-scheme: light dark;
+        font-family: system-ui, sans-serif;
+      }
+      body {
+        max-width: 960px;
+        margin: 2rem auto;
+        padding: 0 1rem;
+      }
+      .examples {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 1rem;
+      }
+      h2 {
+        font-size: 1rem;
+        margin: 0 0 0.5rem;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>&lt;jscad-viewer&gt;</h1>
+    <p>
+      Theme:
+      <select id="theme">
+        <option value="">Follow system</option>
+        <option value="light">Light</option>
+        <option value="dark">Dark</option>
+      </select>
+    </p>
+
+    <div class="examples">
+      <section>
+        <h2>3D solids</h2>
+        <jscad-viewer>
+          <script type="text/jscad">
+import { cuboid, sphere, subtract, union, translate } from '@jscad/modeling'
+
+export const main = () => subtract(
+  union(cuboid({ size: [20, 20, 10] }), translate([0, 0, 5], sphere({ radius: 8 }))),
+  sphere({ radius: 6, center: [0, 0, 8] })
+)
+          </script>
+        </jscad-viewer>
+      </section>
+
+      <section>
+        <h2>2D shapes</h2>
+        <jscad-viewer>
+          <script type="text/jscad">
+import { circle, rectangle, star, translate, triangle } from '@jscad/modeling'
+
+export const main = () => [
+  translate([-15, 0, 0], rectangle({ size: [8, 12] })),
+  translate([-5, 0, 0], circle({ radius: 5 })),
+  translate([6, 0, 0], star({ vertices: 5, outerRadius: 5 })),
+  translate([17, 0, 0], triangle({ type: 'SSS', values: [8, 8, 8] }))
+]
+          </script>
+        </jscad-viewer>
+      </section>
+
+      <section>
+        <h2>Parameters (defaults are used)</h2>
+        <jscad-viewer>
+          <script type="text/jscad">
+import { cylinder } from '@jscad/modeling'
+
+export const getParameterDefinitions = () => [
+  { name: 'radius', type: 'number', initial: 4, caption: 'Radius' },
+  { name: 'height', type: 'number', initial: 12, caption: 'Height' }
+]
+
+export const main = ({ radius, height }) => cylinder({ radius, height })
+          </script>
+        </jscad-viewer>
+      </section>
+
+      <section>
+        <h2>Broken design</h2>
+        <jscad-viewer>
+          <script type="text/jscad">
+import { cuboid } from '@jscad/modeling'
+
+export const main = () => cubiod({ size: [1, 2, 3] })
+          </script>
+        </jscad-viewer>
+      </section>
+
+      <section>
+        <h2>Set through the <code>code</code> property</h2>
+        <jscad-viewer id="scripted" style="height: 240px"></jscad-viewer>
+      </section>
+    </div>
+
+    <script type="module">
+      import './src/index.ts';
+
+      document.querySelector('#scripted').code = `
+import { torus } from '@jscad/modeling'
+
+export const main = () => torus({ innerRadius: 2, outerRadius: 6 })
+`;
+
+      document.querySelector('#theme').addEventListener('change', (event) => {
+        const theme = event.target.value;
+        document.documentElement.style.colorScheme = theme || 'light dark';
+        for (const viewer of document.querySelectorAll('jscad-viewer')) {
+          viewer.theme = theme || null;
+        }
+      });
+
+      document.addEventListener('jscad-error', (event) => {
+        console.info('[jscad-viewer]', event.detail.kind, event.detail.message);
+      });
+    </script>
+  </body>
+</html>

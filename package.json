@@ -1,0 +1,55 @@
+{
+  "name": "@receter/jscad-viewer",
+  "version": "0.1.0",
+  "description": "A <jscad-viewer> web component that evaluates a JSCAD design in the browser and shows it in an orbitable 3D view.",
+  "keywords": [
+    "jscad",
+    "openjscad",
+    "cad",
+    "3d",
+    "viewer",
+    "web-component",
+    "custom-element",
+    "webgl"
+  ],
+  "license": "MIT",
+  "author": "Andreas Riedmueller",
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/jscad-viewer.js"
+    }
+  },
+  "module": "./dist/jscad-viewer.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "sideEffects": [
+    "./dist/jscad-viewer.js"
+  ],
+  "browserslist": [
+    "since 2025-10",
+    "not dead"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build && tsc -p tsconfig.build.json",
+    "typecheck": "tsc",
+    "prepublishOnly": "npm run build"
+  },
+  "dependencies": {
+    "@jscad/modeling": "^3.0.7-alpha.0",
+    "@jscad/regl-renderer": "^3.0.7-alpha.0"
+  },
+  "devDependencies": {
+    "browserslist": "^4.29.3",
+    "browserslist-to-esbuild": "^2.1.1",
+    "typescript": "~6.0.2",
+    "vite": "^8.3.0"
+  }
+}
